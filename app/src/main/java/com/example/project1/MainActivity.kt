@@ -6,14 +6,18 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
-import kotlin.random.nextUInt
 
 class MainActivity : AppCompatActivity() {
+    private val highBound = 1000
+    private val lowBound = 0
     private var leftButtonVal: Int = 0
     private var rightButtonVal: Int = 0
     private var points: Int = 0
-    private var random: Random = Random(654185826358848)
     private var scoreTerm: String = ""
+
+    private enum class Buttons {
+        LEFT, RIGHT
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,13 +25,16 @@ class MainActivity : AppCompatActivity() {
 
         scoreTerm = resources.getString(R.string.score_term)
 
+        leftButtonVal = randomNumber()
+        rightButtonVal = randomNumber()
+
         updatePointsText()
-        generateNewNumbers()
+        updateButtonNumbers()
     }
 
     fun guess(view: View) {
-        val correctButton: String = if (rightButtonVal > leftButtonVal) "right" else "left"
-        val actualButton: String = if (view.id == R.id.right_button) "right" else "left"
+        val correctButton: Buttons = if (rightButtonVal > leftButtonVal) Buttons.RIGHT else Buttons.LEFT
+        val actualButton: Buttons = if (view.id == R.id.right_button) Buttons.RIGHT else Buttons.LEFT
 
         if (correctButton == actualButton) {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show()
@@ -39,7 +46,13 @@ class MainActivity : AppCompatActivity() {
 
         updatePointsText()
 
-        generateNewNumbers()
+        if(actualButton == Buttons.RIGHT) {
+            rightButtonVal = randomNumber()
+        } else {
+            leftButtonVal = randomNumber()
+        }
+
+        updateButtonNumbers()
     }
 
     private fun updatePointsText() {
@@ -48,14 +61,12 @@ class MainActivity : AppCompatActivity() {
         points_text.text = pointsMessage
     }
 
-    private fun generateNewNumbers() {
-        do {
-            leftButtonVal = random.nextInt(1000)
-            rightButtonVal = random.nextInt(1000)
-        } while (leftButtonVal == rightButtonVal)
-
-
-        left_button.text = "$leftButtonVal"
+    private fun updateButtonNumbers() {
         right_button.text = "$rightButtonVal"
+        left_button.text = "$leftButtonVal"
+    }
+
+    private fun randomNumber(): Int {
+        return (lowBound..highBound).random()
     }
 }
