@@ -47,9 +47,13 @@ class MainActivity : AppCompatActivity() {
         updatePointsText()
 
         if(actualButton == Buttons.RIGHT) {
-            rightButtonVal = randomNumber()
+            do {
+                rightButtonVal = randomNumber()
+            } while(rightButtonVal == leftButtonVal)
         } else {
-            leftButtonVal = randomNumber()
+            do {
+                leftButtonVal = randomNumber()
+            } while (leftButtonVal == rightButtonVal)
         }
 
         updateButtonNumbers()
